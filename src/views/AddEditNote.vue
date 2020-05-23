@@ -36,7 +36,6 @@
             v-for="item in uncompletedTodos"
             :item="item"
             :key="item.id"
-            @change-todo-status="changeTodoStaus(item.id)"
             @delete-todo="deleteTodo(item.id)"
             @edit-todo="editTodo(item.id, $event)"
           />
@@ -49,32 +48,21 @@
             v-for="item in completedTodos"
             :item="item"
             :key="item.id"
-            @change-todo-status="changeTodoStaus(item.id)"
             @delete-todo="deleteTodo(item.id)"
           />
         </CustomList>
       </div>
-      <!-- <div class="form-actions">
-
-      </div> -->
     </form>
     <ButtonsPanel>
-      <!-- <button type="submit">Save</button>
-      <button type="button">Cancel</button>
-      <button type="button">Delete</button>
-      <button type="button">Undo</button>
-      <button type="button">Redo</button> -->
       <CustomButton @click-handler="saveNote" name="Save" :disabled="!note.title.trim()" />
       <CustomButton @click-handler="$router.push('/')" name="Cancel" />
       <CustomButton @click-handler="deleteNote" name="Delete" :disabled="!id" />
-      <CustomButton @click-handler="$router.push('/')" name="Undo" />
-      <CustomButton @click-handler="$router.push('/')" name="Redo" />
-      <!-- <button
-        v-for="btn in buttons"
-        :key="btn.id"
-        @click="btn.clickHandler"
-        type="button"
-      >{{ btn.name }}</button> -->
+      <CustomButton @click-handler="undoNoteChanges" name="Undo" :disabled="wasNoteChange" />
+      <CustomButton
+        @click-handler="redoNoteChanges"
+        name="Redo"
+        :disabled="!(newNote && wasNoteChange)"
+      />
     </ButtonsPanel>
   </div>
 </template>
@@ -106,6 +94,12 @@ export default {
         title: '',
         todos: [],
       },
+      previousNote: {
+        id: null,
+        title: '',
+        todos: [],
+      },
+      newNote: null,
       newTodo: '',
     };
   },
@@ -118,6 +112,25 @@ export default {
     },
     completedTodos() {
       return this.note.todos.filter((el) => el.isCompleted);
+    },
+    wasNoteChange() {
+      return JSON.stringify(this.note) === JSON.stringify(this.previousNote);
+    },
+  },
+  watch: {
+    id(newVal) {
+      if (!newVal) {
+        this.note = {
+          id: null,
+          title: '',
+          todos: [],
+        };
+        this.previousNote = {
+          id: null,
+          title: '',
+          todos: [],
+        };
+      }
     },
   },
   methods: {
@@ -135,6 +148,23 @@ export default {
     deleteNote(noteId) {
       this.$store.dispatch('DELETE_NOTE', noteId);
     },
+    undoNoteChanges() {
+      this.newNote = {
+        ...this.note,
+        todos: this.note.todos.map((el) => ({ ...el })),
+      };
+      this.note = {
+        ...this.previousNote,
+        todos: this.previousNote.todos.map((el) => ({ ...el })),
+      };
+    },
+    redoNoteChanges() {
+      this.note = {
+        ...this.newNote,
+        todos: this.newNote.todos.map((el) => ({ ...el })),
+      };
+      this.newNote = null;
+    },
     addTodo() {
       const id = `f${(+new Date()).toString(16)}`;
       this.note.todos.splice(0, 0, {
@@ -151,10 +181,6 @@ export default {
       const todo = this.note.todos.find((el) => el.id === todoId);
       todo.title = todoTitle;
     },
-    changeTodoStaus(todoId) {
-      const todo = this.note.todos.find((el) => el.id === todoId);
-      todo.isCompleted = !todo.isCompleted;
-    },
   },
   async created() {
     try {
@@ -164,13 +190,18 @@ export default {
         if (!editNote.data()) {
           this.$router.push('/');
         } else {
-          this.note = { ...this.note, ...editNote.data(), id: editNote.id };
+          this.note = { ...editNote.data(), id: editNote.id };
+          this.previousNote = { ...editNote.data(), id: editNote.id };
           this.$store.commit('SET_LOADING_EDIT_NOTE_STATUS', false);
         }
       }
     } catch (error) {
       console.log(error);
     }
+  },
+  updated() {
+    console.log(this.note);
+    console.log(this.previousNote);
   },
 };
 </script>

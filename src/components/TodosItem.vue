@@ -3,15 +3,14 @@
     <input
       class="item__check"
       type="checkbox"
-      v-model="item.isComplete"
+      v-model="item.isCompleted"
       :true-value="true"
       :false-value="false"
-      @change="changeTodoStatus"
     >
     <span class="item__title" v-if="edit !== item.id">{{ item.title }}</span>
     <input class="form-control item__title--edit" v-else v-model="newTodoTitle">
     <span class="item__actions">
-      <template v-if="!item.isComplete">
+      <template v-if="!item.isCompleted">
         <CustomButton
           v-if="edit !== item.id"
           name="Edit"
@@ -56,9 +55,6 @@ export default {
     editTodo(id, newTodoTitle) {
       this.edit = false;
       this.$emit('edit-todo', newTodoTitle);
-    },
-    changeTodoStatus() {
-      this.$emit('change-todo-status');
     },
   },
 };

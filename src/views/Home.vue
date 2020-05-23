@@ -7,9 +7,13 @@
         v-for="note in notes"
         :key="note.id"
         :note="note"
-        @delete-note="deleteNote(note.id)"
+        @delete-note="showModal(note.id)"
       />
     </CustomList>
+    <DialogModal
+      v-show="isModalVisible"
+      @close="closeModal"
+    />
   </div>
 </template>
 
@@ -17,7 +21,7 @@
 import CustomList from '@/components/CustomList.vue';
 import NotesItem from '@/components/NotesItem.vue';
 import Loader from '@/components/Loader.vue';
-
+import DialogModal from '@/components/DialogModal.vue';
 
 export default {
   name: 'Home',
@@ -25,9 +29,11 @@ export default {
     CustomList,
     NotesItem,
     Loader,
+    DialogModal,
   },
   data() {
     return {
+      isModalVisible: false,
     };
   },
   computed: {
@@ -41,6 +47,13 @@ export default {
   methods: {
     deleteNote(noteId) {
       this.$store.dispatch('DELETE_NOTE', noteId);
+    },
+    showModal(noteId) {
+      console.log(noteId);
+      this.isModalVisible = true;
+    },
+    closeModal() {
+      this.isModalVisible = false;
     },
   },
   async created() {
