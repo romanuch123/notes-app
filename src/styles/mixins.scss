@@ -1,0 +1,22 @@
+@import './variables.scss';
+
+@mixin flex-vertical-center($horizontalContent) {
+  display: -webkit-flex;
+  display: flex;
+  align-items: center;
+  justify-content: $horizontalContent;
+}
+
+@mixin form-style {
+  border: 1px solid $formBorderColor;
+  border-radius: 8px;
+  background: $formBackground;
+  padding: 10px;
+}
+
+@mixin list-item-style {
+  border: 1px solid $listItemBorderColor;
+  border-radius: 8px;
+  background: $listItemBackground;
+  padding: 10px;
+}
