@@ -5,13 +5,14 @@
         role="dialog"
         aria-labelledby="modalTitle"
         aria-describedby="modalDescription"
+        v-click-outside="close"
       >
         <header
           class="modal-header"
           id="modalTitle"
         >
           <slot name="header">
-            This is the default tile!
+            This is the default title!
 
             <button
               type="button"

@@ -2,9 +2,11 @@
   <button
     type="button"
     class="custom-btn"
-    @click="clickHandler"
+    @click.stop="clickHandler"
     :disabled="disabled"
-  >{{ name }}</button>
+  >
+    <slot></slot>
+  </button>
 </template>
 
 <script>
@@ -12,10 +14,6 @@
 export default {
   name: 'CustomButton',
   props: {
-    name: {
-      type: String,
-      default: 'Btn',
-    },
     disabled: {
       type: Boolean,
       default: false,

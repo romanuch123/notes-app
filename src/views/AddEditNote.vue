@@ -26,7 +26,7 @@
             placeholder="TODO title"
             v-model="newTodo"
           >
-          <CustomButton @click-handler="addTodo" name="+" :disabled="!newTodo.trim()" />
+          <CustomButton @click-handler="addTodo" :disabled="!newTodo.trim()">+</CustomButton>
         </div>
       </div>
       <div class="todos-wrapper">
@@ -54,16 +54,19 @@
       </div>
     </form>
     <ButtonsPanel>
-      <CustomButton @click-handler="saveNote" name="Save" :disabled="!note.title.trim()" />
-      <CustomButton @click-handler="$router.push('/')" name="Cancel" />
-      <CustomButton @click-handler="deleteNote" name="Delete" :disabled="!id" />
-      <CustomButton @click-handler="undoNoteChanges" name="Undo" :disabled="wasNoteChange" />
+      <CustomButton @click-handler="saveNote" :disabled="!note.title.trim()">Save</CustomButton>
+      <CustomButton @click-handler="$router.push('/')" >Cancel</CustomButton>
+      <CustomButton @click-handler="deleteNote" :disabled="!id" >Delete</CustomButton>
+      <CustomButton @click-handler="undoNoteChanges" :disabled="wasNoteChange">Undo</CustomButton>
       <CustomButton
         @click-handler="redoNoteChanges"
-        name="Redo"
         :disabled="!(newNote && wasNoteChange)"
-      />
+      >Redo</CustomButton>
     </ButtonsPanel>
+    <DialogModal
+      v-show="isModalVisible"
+      @close="closeModal"
+    />
   </div>
 </template>
 
@@ -73,6 +76,7 @@ import Loader from '@/components/Loader.vue';
 import ButtonsPanel from '@/components/ButtonsPanel.vue';
 import TodosItem from '@/components/TodosItem.vue';
 import CustomButton from '@/components/CustomButton.vue';
+import DialogModal from '@/components/DialogModal.vue';
 import db from '@/services/firebase';
 
 export default {
@@ -83,6 +87,7 @@ export default {
     ButtonsPanel,
     TodosItem,
     CustomButton,
+    DialogModal,
   },
   props: {
     id: String,
@@ -101,6 +106,7 @@ export default {
       },
       newNote: null,
       newTodo: '',
+      isModalVisible: false,
     };
   },
   computed: {
@@ -181,6 +187,9 @@ export default {
       const todo = this.note.todos.find((el) => el.id === todoId);
       todo.title = todoTitle;
     },
+    closeModal() {
+      this.isModalVisible = false;
+    },
   },
   async created() {
     try {
@@ -198,10 +207,6 @@ export default {
     } catch (error) {
       console.log(error);
     }
-  },
-  updated() {
-    console.log(this.note);
-    console.log(this.previousNote);
   },
 };
 </script>

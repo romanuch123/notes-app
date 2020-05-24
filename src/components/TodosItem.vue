@@ -1,6 +1,7 @@
 <template>
-  <li class="item">
+  <li class="item" v-click-outside="stopEditing">
     <input
+      v-if="edit !== item.id"
       class="item__check"
       type="checkbox"
       v-model="item.isCompleted"
@@ -13,22 +14,19 @@
       <template v-if="!item.isCompleted">
         <CustomButton
           v-if="edit !== item.id"
-          name="Edit"
           @click-handler="edit = item.id, newTodoTitle = item.title"
-        />
+        >Edit</CustomButton>
         <CustomButton
           v-if="edit === item.id"
-          name="Save"
           @click-handler="editTodo(item.id, newTodoTitle)"
           :disabled="!newTodoTitle.trim()"
-        />
+        >Save</CustomButton>
         <CustomButton
           v-if="edit === item.id"
-          name="Cancel"
           @click-handler="edit = '', newTodoTitle = ''"
-        />
+        >Cancel</CustomButton>
       </template>
-      <CustomButton v-if="edit !== item.id" name="Delete" @click-handler="deleteTodo"/>
+      <CustomButton v-if="edit !== item.id" @click-handler="deleteTodo">Delete</CustomButton>
     </span>
   </li>
 </template>
@@ -56,6 +54,9 @@ export default {
       this.edit = false;
       this.$emit('edit-todo', newTodoTitle);
     },
+    stopEditing() {
+      this.edit = false;
+    },
   },
 };
 </script>
@@ -77,6 +78,7 @@ export default {
   &__title--edit {
     flex: 1;
     padding: 0 10px;
+    min-width: 10%;
   }
   &__actions {
     button {

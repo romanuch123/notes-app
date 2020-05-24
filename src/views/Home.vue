@@ -33,7 +33,7 @@ export default {
   },
   data() {
     return {
-      isModalVisible: false,
+      isModalVisible: true,
     };
   },
   computed: {
@@ -56,8 +56,8 @@ export default {
       this.isModalVisible = false;
     },
   },
-  async created() {
-    await this.$store.dispatch('GET_NOTES');
+  created() {
+    this.$store.dispatch('GET_NOTES');
   },
 };
 </script>

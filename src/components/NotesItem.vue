@@ -5,8 +5,8 @@
         <span class="list-item__title">{{ note.title | capitalize }}</span>
       </div>
       <div class="list-item__actions">
-        <CustomButton @click-handler="$router.push(`/edit/${note.id}`)" name="Edit" />
-        <CustomButton @click-handler="deleteNote" name="Delete" />
+        <CustomButton @click-handler="$router.push(`/edit/${note.id}`)">Edit</CustomButton>
+        <CustomButton @click-handler="deleteNote">Delete</CustomButton>
       </div>
     </div>
     <div class="list-item__nested-list-wrapper">
